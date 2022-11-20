@@ -1,5 +1,0 @@
-![](https://github.com/Programming-Engineering-Pmi-33/Drink_water/blob/Source/Documentary/LogIn.png)
-![](https://github.com/Programming-Engineering-Pmi-33/Drink_water/blob/Source/Documentary/Main.png)
-![](https://github.com/Programming-Engineering-Pmi-33/Drink_water/blob/Source/Documentary/ProfileandStatistic.png)
-![](https://github.com/Programming-Engineering-Pmi-33/Drink_water/blob/Source/Documentary/Settings.png)
-![](https://github.com/Programming-Engineering-Pmi-33/Drink_water/blob/Source/Documentary/SighnUp.png)
