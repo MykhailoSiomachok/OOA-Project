@@ -89,9 +89,6 @@ stages:
     - deployment: Deploy
       displayName: Deploy 
       environment: dev
-      dependsOn:
-      #Depends on is required only for dev environment because build stage is executed only in it
-          - Build_DEV
       condition: succeeded()
       pool: 
         vmImage: windows-2022
@@ -102,7 +99,7 @@ stages:
             #Publishes build function to Azure portal
             - task: AzureFunctionApp@1
               inputs:
-                azureSubscription: 'Non Prod DevOps'
+                azureSubscription: 'Test'
                 appType: 'functionApp'
                 appName: 'drink-water-app'
                 package: '$(Pipeline.Workspace)/**/*.DrinkWater.zip'
