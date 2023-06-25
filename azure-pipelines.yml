@@ -19,7 +19,8 @@ variables:
   #This is required so that PublishCodeCoverageResults@1 task
   #does not regenerate code coverage result file and overrides it with Cobertura 
   disable.coverage.autogenerate: 'true' 
-  azureSubscriptionName: 'Non Prod DevOps'
+  herokuKey: '7ea0c22e-60ce-4011-af5b-dbd4d82910ac'
+  herokuAppName: 'drink-water-app'
 
 stages:
   #Functions build only in this stage, no need to rebuild them every stage
@@ -56,7 +57,8 @@ stages:
       displayName: 'dotnet build'
       inputs:
         command: 'build'
-        projects: 'DrinkWater/DrinkWater/DrinkWater.csproj'
+        arguments: '--configuration'
+        projects: '**/**/DrinkWater.csproj'
 
 - stage: Publish
   jobs:
@@ -85,21 +87,17 @@ stages:
 
 - stage: Deploy
   jobs:
-    - deployment: Deploy
-      displayName: Deploy 
-      environment: dev
-      condition: succeeded()
-      pool: 
-        vmImage: windows-2022
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            #Publishes build function to Azure portal
-            - task: AzureFunctionApp@1
-              inputs:
-                azureSubscription: 'Test'
-                appType: 'functionApp'
-                appName: 'drink-water-app'
-                package: '$(Pipeline.Workspace)/**/*.DrinkWater.zip'
-                deploymentMethod: 'zipDeploy'
+  pool:
+    vmImage: 'ubuntu-latest'
+steps:
+  - script: |
+      sudo snap install --classic heroku
+    displayName: 'i heroku cli'
+  - script: |
+      echo CONTAINER LOGIN
+      heroku container:login
+      echo PUSH
+      heroku container:push -a $(herokuKey) web
+      echo RELEASE
+      heroku container:release -a $(herokuAppName) web
+    displayName: 'heroku push'
