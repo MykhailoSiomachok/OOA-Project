@@ -93,7 +93,6 @@ stages:
     steps:
       - script: |
           # npm install -global heroku
-          brew install heroku
         displayName: Install Heroku
       - script: |
           echo CONTAINER LOGIN
