@@ -89,15 +89,16 @@ stages:
   pool:
     vmImage: 'ubuntu-latest'
   jobs:
-steps:
-  - script: |
-      sudo snap install --classic heroku
-    displayName: 'i heroku cli'
-  - script: |
-      echo CONTAINER LOGIN
-      heroku container:login
-      echo PUSH
-      heroku container:push -a $(herokuKey) web
-      echo RELEASE
-      heroku container:release -a $(herokuAppName) web
-    displayName: 'heroku push'
+  - job: Deploy_to_Heroku
+    displayName: 'install heroku cli'
+    steps:
+      - script: sudo snap install --classic heroku
+        displayName: Install Heroku
+      - script: |
+          echo CONTAINER LOGIN
+          heroku container:login
+          echo PUSH
+          heroku container:push -a $(herokuKey) web
+          echo RELEASE
+          heroku container:release -a $(herokuAppName) web
+        displayName: Deploy to Heroku
