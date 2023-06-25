@@ -57,7 +57,7 @@ stages:
       inputs:
         command: 'build'
         arguments: '--configuration'
-        projects: 'DrinkWater/DrinkWater/DrinkWater.csproj'
+        projects: '**/**/DrinkWater.csproj'
 
 - stage: Publish
   jobs:
