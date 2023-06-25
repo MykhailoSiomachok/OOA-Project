@@ -1,0 +1,106 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: 
+  batch: true
+  branches:
+    include: 
+    - dev 
+
+pool:
+  #As of 17.02.2023 current windows-2022 agent image has NEWER components installed than windows-latest
+  #See: https://learn.microsoft.com/pl-pl/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml
+  vmImage: windows-2022
+
+variables:
+  buildConfiguration: 'Release' 
+  #This is required so that PublishCodeCoverageResults@1 task
+  #does not regenerate code coverage result file and overrides it with Cobertura 
+  disable.coverage.autogenerate: 'true' 
+  azureSubscriptionName: 'Non Prod DevOps'
+
+stages:
+  #Functions build only in this stage, no need to rebuild them every stage
+  #Stage to deploy functions to Dev environment
+- stage: Deployment_DEV
+  jobs:
+  #Template for azure functions build and artifact publishment
+  - job: Build_DEV
+    displayName: Build dev
+    steps:
+    #Install required framework version on build agent
+    - task: UseDotNet@2
+      displayName: 'Install .NET 3.1 SDK'
+      inputs:
+        packageType: 'runtime'
+        version: 3.x
+        performMultiLevelLookup: true
+        includePreviewVersions: true 
+        # Required for preview versions
+        #Update nuget.exe to newest version. 
+    - task: NuGetToolInstaller@1
+      displayName: 'Install nuget.exe'
+      inputs:
+        checkLatest: true
+    #Restore nuget packages in entire solution from NuGetOrg
+    - task: NuGetRestore@1
+      displayName: 'NuGet Restore'
+      inputs:
+        solution: '**/*.sln'
+        selectOrConfig: 'select'
+        includeNuGetOrg: true
+    #Azure function zip - publish
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet build'
+      inputs:
+        command: 'build'
+        arguments: '--configuration'
+        projects: '/DrinkWater/DrinkWater.csproj'
+
+- stage: Publish
+  jobs:
+  #Template for azure functions build and artifact publishment
+  - job: Publish_Dev
+    # Publish the artifact
+    displayName: Build dev
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: Publish
+      inputs:
+        command: 'publish'
+          # This need to be false in order for the specific project to be published
+        publishWebProjects: False
+        projects: '**/DrinkWater/DrinkWater.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/DrinkWater/publish'
+        zipAfterPublish: True
+
+      # Publish the artifact for the pipelines to use
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publishing Artifact'
+      inputs:
+        pathtoPublish: '$(Build.ArtifactStagingDirectory)/DrinkWater/publish' 
+        artifactName: 'DrinkWater.$(Build.BuildId)'
+     #Deploying functions to Azure portalparameters:
+
+- stage: Deploy
+  jobs:
+    - deployment: Deploy
+      displayName: Deploy 
+      environment: dev
+      condition: succeeded()
+      pool: 
+        vmImage: windows-2022
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            #Publishes build function to Azure portal
+            - task: AzureFunctionApp@1
+              inputs:
+                azureSubscription: 'Test'
+                appType: 'functionApp'
+                appName: 'drink-water-app'
+                package: '$(Pipeline.Workspace)/**/*.DrinkWater.zip'
+                deploymentMethod: 'zipDeploy'
