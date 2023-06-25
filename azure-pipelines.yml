@@ -86,9 +86,9 @@ stages:
      #Deploying functions to Azure portalparameters:
 
 - stage: Deploy
-  jobs:
   pool:
     vmImage: 'ubuntu-latest'
+  jobs:
 steps:
   - script: |
       sudo snap install --classic heroku
