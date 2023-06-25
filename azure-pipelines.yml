@@ -56,7 +56,6 @@ stages:
       displayName: 'dotnet build'
       inputs:
         command: 'build'
-        arguments: '--configuration'
         projects: 'DrinkWater/DrinkWater/DrinkWater.csproj'
 
 - stage: Publish
