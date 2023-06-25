@@ -92,7 +92,7 @@ stages:
     displayName: 'install heroku cli'
     steps:
       - script: |
-          npm install -global heroku
+          # npm install -global heroku
           brew install heroku
         displayName: Install Heroku
       - script: |
