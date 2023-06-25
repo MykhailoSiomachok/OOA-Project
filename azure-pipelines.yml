@@ -92,7 +92,7 @@ stages:
     displayName: 'install heroku cli'
     steps:
       - script: |
-          npm install -global Heroku
+          npm install -global heroku
           sudo snap install --classic heroku
         displayName: Install Heroku
       - script: |
