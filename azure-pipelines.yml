@@ -93,7 +93,7 @@ stages:
     steps:
       - script: |
           npm install -global heroku
-          sudo snap install --classic heroku
+          brew install heroku
         displayName: Install Heroku
       - script: |
           echo CONTAINER LOGIN
