@@ -91,7 +91,9 @@ stages:
   - job: Deploy_to_Heroku
     displayName: 'install heroku cli'
     steps:
-      - script: sudo snap install --classic heroku
+      - script: |
+          npm install -global Heroku
+          sudo snap install --classic heroku
         displayName: Install Heroku
       - script: |
           echo CONTAINER LOGIN
