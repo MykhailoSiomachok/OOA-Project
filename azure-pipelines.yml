@@ -15,6 +15,3 @@ steps:
       echo RELEASE
       heroku container:release -a $HEROKU_APP_NAME web
     displayName: 'heroku push'
-env:
-  HEROKU_API_KEY: $(HEROKU_API_KEY)
-  HEROKU_APP_NAME: $(HEROKU_APP_NAME)
