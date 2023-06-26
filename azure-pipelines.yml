@@ -98,7 +98,7 @@ stages:
           echo CONTAINER LOGIN
           sudo heroku container:login
           echo PUSH
-          sudo heroku container:push -a $(herokuKey) web
+          sudo heroku container:push -a $(HerokuKey) web
           echo RELEASE
-          sudo heroku container:release -a $(herokuAppName) web
+          sudo heroku container:release -a $(HerokuAppName) web
         displayName: Deploy to Heroku
