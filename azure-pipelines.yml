@@ -4,7 +4,7 @@ pool:
   vmImage: 'ubuntu-latest'
 steps:
   - script: |
-      npm install -g heroku
+      npm install -g heroku --force
     displayName: 'i heroku cli'
   - script: |
       echo CONTAINER LOGIN
