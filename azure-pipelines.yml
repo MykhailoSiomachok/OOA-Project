@@ -4,8 +4,7 @@ pool:
   vmImage: 'ubuntu-latest'
 steps:
   - script: |
-      # npm install -global Heroku
-      sudo snap install --classic heroku
+      npm install -g heroku
     displayName: 'i heroku cli'
   - script: |
       echo CONTAINER LOGIN
