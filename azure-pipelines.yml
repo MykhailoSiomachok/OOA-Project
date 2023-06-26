@@ -19,7 +19,7 @@ variables:
   #This is required so that PublishCodeCoverageResults@1 task
   #does not regenerate code coverage result file and overrides it with Cobertura 
   disable.coverage.autogenerate: 'true' 
-  herokuKey: '7ea0c22e-60ce-4011-af5b-dbd4d82910ac'
+  herokuKey: '39995b81-71d9-4451-987e-cccd4e85519e'
   herokuAppName: 'drink-water-app'
 
 stages:
@@ -95,8 +95,6 @@ stages:
           # npm install -global heroku
         displayName: Install Heroku
       - script: |
-          echo ACC LOGIN
-          sudo heroku login
           echo CONTAINER LOGIN
           sudo heroku container:login
           echo PUSH
