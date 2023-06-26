@@ -1,106 +1,20 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger: 
-  batch: true
-  branches:
-    include: 
-    - dev 
-
+trigger:
+- dev
 pool:
-  #As of 17.02.2023 current windows-2022 agent image has NEWER components installed than windows-latest
-  #See: https://learn.microsoft.com/pl-pl/azure/devops/pipelines/agents/hosted?view=azure-devops&tabs=yaml
-  vmImage: windows-2022
-
-variables:
-  buildConfiguration: 'Release' 
-  #This is required so that PublishCodeCoverageResults@1 task
-  #does not regenerate code coverage result file and overrides it with Cobertura 
-  disable.coverage.autogenerate: 'true' 
-  HEROKU_API_KEY: '39995b81-71d9-4451-987e-cccd4e85519e'
-  herokuAppName: 'drink-water-app'
-
-stages:
-  #Functions build only in this stage, no need to rebuild them every stage
-  #Stage to deploy functions to Dev environment
-# - stage: Deployment_DEV
-#   jobs:
-#   #Template for azure functions build and artifact publishment
-#   - job: Build_DEV
-#     displayName: Build dev
-#     steps:
-#     #Install required framework version on build agent
-#     - task: UseDotNet@2
-#       displayName: 'Install .NET 3.1 SDK'
-#       inputs:
-#         packageType: 'runtime'
-#         version: 3.x
-#         performMultiLevelLookup: true
-#         includePreviewVersions: true 
-#         # Required for preview versions
-#         #Update nuget.exe to newest version. 
-#     - task: NuGetToolInstaller@1
-#       displayName: 'Install nuget.exe'
-#       inputs:
-#         checkLatest: true
-#     #Restore nuget packages in entire solution from NuGetOrg
-#     - task: NuGetRestore@1
-#       displayName: 'NuGet Restore'
-#       inputs:
-#         solution: '**/*.sln'
-#         selectOrConfig: 'select'
-#         includeNuGetOrg: true
-#     #Azure function zip - publish
-#     - task: DotNetCoreCLI@2
-#       displayName: 'dotnet build'
-#       inputs:
-#         command: 'build'
-#         projects: '**/**/DrinkWater.csproj'
-
-# - stage: Publish
-#   jobs:
-#   #Template for azure functions build and artifact publishment
-#   - job: Publish_Dev
-#     # Publish the artifact
-#     displayName: Build dev
-#     steps:
-#     - task: DotNetCoreCLI@2
-#       displayName: Publish
-#       inputs:
-#         command: 'publish'
-#           # This need to be false in order for the specific project to be published
-#         publishWebProjects: False
-#         projects: '**/DrinkWater/DrinkWater.csproj'
-#         arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/DrinkWater/publish'
-#         zipAfterPublish: True
-
-#       # Publish the artifact for the pipelines to use
-#     - task: PublishBuildArtifacts@1
-#       displayName: 'Publishing Artifact'
-#       inputs:
-#         pathtoPublish: '$(Build.ArtifactStagingDirectory)/DrinkWater/publish' 
-#         artifactName: 'DrinkWater.$(Build.BuildId)'
-#      #Deploying functions to Azure portalparameters:
-
-- stage: Deploy
-  pool:
-    vmImage: 'ubuntu-latest'
-  jobs:
-  - job: Deploy_to_Heroku
-    displayName: 'install heroku cli'
-    steps:
-      - script: |
-          # npm install -global heroku
-          echo $(HEROKU_API_KEY)
-          echo $(HerokuAppName)
-        displayName: Install Heroku
-      - script: |
-          echo CONTAINER LOGIN
-          sudo heroku container:login
-          echo PUSH
-          sudo heroku container:push -a $(HEROKU_API_KEY) web
-          echo RELEASE
-          sudo heroku container:release -a $(HerokuAppName) web
-        displayName: Deploy to Heroku
+  vmImage: 'ubuntu-latest'
+steps:
+  - script: |
+      # npm install -global Heroku
+      sudo snap install --classic heroku
+    displayName: 'i heroku cli'
+  - script: |
+      echo CONTAINER LOGIN
+      heroku container:login
+      echo PUSH
+      heroku container:push -a $HEROKU_APP_NAME web
+      echo RELEASE
+      heroku container:release -a $HEROKU_APP_NAME web
+    displayName: 'heroku push'
+env:
+  HEROKU_API_KEY: $(HEROKU_API_KEY)
+  HEROKU_APP_NAME: $(HEROKU_APP_NAME)
