@@ -98,7 +98,7 @@ stages:
         displayName: Install Heroku
       - script: |
           echo CONTAINER LOGIN
-          sudo heroku container:login -a $(HEROKU_API_KEY)
+          sudo heroku container:login
           echo PUSH
           sudo heroku container:push -a $(HEROKU_API_KEY) web
           echo RELEASE
