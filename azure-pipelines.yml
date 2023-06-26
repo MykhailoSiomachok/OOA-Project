@@ -7,6 +7,7 @@ steps:
       npm install -g heroku --force
     displayName: 'i heroku cli'
   - script: |
+      docker build -f Dockerfile -t $HEROKU_APP_NAME ./DrinkWater/DrinkWater
       echo CONTAINER LOGIN
       heroku container:login
       echo PUSH
