@@ -93,6 +93,8 @@ stages:
     steps:
       - script: |
           # npm install -global heroku
+          echo $(HEROKU_API_KEY)
+          echo $(HerokuAppName)
         displayName: Install Heroku
       - script: |
           echo CONTAINER LOGIN
