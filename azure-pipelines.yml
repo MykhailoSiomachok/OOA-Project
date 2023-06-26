@@ -95,6 +95,8 @@ stages:
           # npm install -global heroku
         displayName: Install Heroku
       - script: |
+          echo ACC LOGIN
+          sudo heroku auth:login
           echo CONTAINER LOGIN
           sudo heroku container:login
           echo PUSH
